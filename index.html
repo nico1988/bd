@@ -1,3 +1,10 @@
+<!------------------------------------------------------------------ 
+// 文件功能描述： 实现百度搜索
+// author：nico xia
+// time：20170512
+// tag：vue 
+// 
+//------------------------------------------------------------------>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,7 +27,8 @@
             width: 50%;
             height: 30px;
             border-radius: 8px;
-            border: 1px solid skyblue
+            border: 1px solid skyblue;
+            text-indent: 10px;
         }
     </style>
     <script src="./lib/vue.js"></script>
@@ -63,6 +71,12 @@
                         //如果等于-2（-1-1），让其跳转到最后一条数据
                         if (this.now == -2) this.now = this.myData.length - 1;
                         this.t1 = this.myData[this.now];
+                    },
+                    so: function(ev) {
+                        this.t1 = ev.target.innerText;
+                        window.open('https://www.baidu.com/s?wd=' + this.t1);
+                        this.t1 = ''; //跳转后重置input框内容
+                        this.myData = [];
                     }
                 }
             });
@@ -71,12 +85,17 @@
 </head>
 
 <body>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
     <div id="box">
         <!--阻止光标跳到前面的默认行为-->
-        <input type="text" v-model="t1" @keyup="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()">
+        <input placeholder="搜索一下" type="text" v-model="t1" @keyup="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()">
         <ul>
             <!--循环得到的数据-->
-            <li v-for="value in myData" :class="{gray:$index==now}">
+            <li v-for="value in myData" :class="{gray:$index==now}" v-on:click="so($event)">
                 {{value}}
             </li>
         </ul>
