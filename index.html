@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>百度搜索--vue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+        .gray {
+            background: rgba(51, 133, 233, .5);
+        }
+        
+        #box {
+            text-align: center;
+        }
+        
+        #box input {
+            width: 50%;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid skyblue
+        }
+    </style>
+    <script src="./lib/vue.js"></script>
+    <script src="./lib/vue-resource.js"></script>
+    <script>
+        window.onload = function() {
+            new Vue({ //新建vue实例
+                el: 'body',
+                data: {
+                    myData: [], //搜索到的值
+                    t1: '', //搜索框值
+                    now: -1 //现在在哪个位置
+                },
+                methods: {
+                    get: function(ev) {
+                        //如果是上下键，直接跳出，以防再次发送请求
+                        if (ev.keyCode == 38 || ev.keyCode == 40) return;
+                        //按回车键，跳转到百度搜索
+                        if (ev.keyCode == 13) {
+                            window.open('https://www.baidu.com/s?wd=' + this.t1);
+                            this.t1 = ''; //跳转后重置input框内容
+                        }
+                        this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su', {
+                            wd: this.t1
+                        }, {
+                            jsonp: "cb"
+                        }).then(function(res) {
+                            this.myData = res.data.s;
+                        }, function() {
+
+                        })
+                    },
+                    changeDown: function() {
+                        this.now++;
+                        if (this.now == this.myData.length) this.now = -1; //如果已经到最后一条
+                        this.t1 = this.myData[this.now];
+                    },
+                    changeUp: function() { //向上按键
+                        this.now--;
+                        //如果等于-2（-1-1），让其跳转到最后一条数据
+                        if (this.now == -2) this.now = this.myData.length - 1;
+                        this.t1 = this.myData[this.now];
+                    }
+                }
+            });
+        };
+    </script>
+</head>
+
+<body>
+    <div id="box">
+        <!--阻止光标跳到前面的默认行为-->
+        <input type="text" v-model="t1" @keyup="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()">
+        <ul>
+            <!--循环得到的数据-->
+            <li v-for="value in myData" :class="{gray:$index==now}">
+                {{value}}
+            </li>
+        </ul>
+        <!--没有数据显示 暂无数据-->
+        <p v-show="myData.length==0">暂无数据...</p>
+    </div>
+</body>
+
+</html>
