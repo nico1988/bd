@@ -30,6 +30,10 @@
             border: 1px solid skyblue;
             text-indent: 10px;
         }
+        
+        #box li:hover {
+            background: rgba(51, 133, 233, .5);
+        }
     </style>
     <script src="./lib/vue.js"></script>
     <script src="./lib/vue-resource.js"></script>
@@ -44,7 +48,7 @@
                 },
                 methods: {
                     get: function(ev) {
-                        //如果是上下键，直接跳出，以防再次发送请求
+                        //如果是上下键，直接跳出，以防再次发送jsonp请求
                         if (ev.keyCode == 38 || ev.keyCode == 40) return;
                         //按回车键，跳转到百度搜索
                         if (ev.keyCode == 13) {
@@ -74,6 +78,7 @@
                     },
                     so: function(ev) {
                         this.t1 = ev.target.innerText;
+                        console.log(this.now)
                         window.open('https://www.baidu.com/s?wd=' + this.t1);
                         this.t1 = ''; //跳转后重置input框内容
                         this.myData = [];
